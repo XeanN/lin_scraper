@@ -1,0 +1,31 @@
+{
+	"name": "lin_scraper",
+	"version": "1.0",
+	"description": "Scrap likedin user data to esasy storage",
+	"permissions": [
+		"storage",
+		"activeTab",
+		"tabs",
+		"downloads"
+	],
+	"background": {
+		"scripts": ["src/background.js"],
+		"persistent": false
+	},
+	"content_scripts": [ {
+		"matches": ["https://www.linkedin.com/in/*/"],
+		"js": ["/src/content.js", "/src/scripts/metaflux.js"],
+		"css": ["/src/css/main.css"]
+	} ],
+	"browser_action": {
+		"default_popup": "src/popup.html"
+	},
+	"icons": {
+		"16": "/src/icons/icon.png"
+	},
+	"manifest_version": 2,
+	"web_accessible_resources": [
+		"queryMap.json",
+		"main.css"
+	]
+}

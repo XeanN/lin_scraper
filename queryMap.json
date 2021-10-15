@@ -1,0 +1,27 @@
+{
+	"avatar": ".pv-top-card-profile-picture > img",
+	"name": ".pv-text-details__left-panel h1",
+	"about": ".pv-about-section > div",
+	"contact_info": ".pv-text-details__left-panel a",
+	"close_btn": ".artdeco-modal > button",
+	"email": "a[href^=\"mailto:\"]",
+	"experience": { 
+		"parent": "#experience-section li",
+		"logo": ".company-logo > img",
+		"c_name": ".pv-entity__summary-info > .pv-entity__secondary-title",
+		"position": ".pv-entity__summary-info > h3",
+		"period": ".pv-entity__summary-info > div > h4 > span:nth-child(2)",
+		"location": ".pv-entity__summary-info > h4 > span:nth-child(2)"
+	 },
+	 "education": {
+		 "parent": "#education-section li",
+		 "logo": ".pv-entity__logo > img",
+		 "u_name": ".pv-entity__degree-info > h3"
+	 },
+	 "skills": {
+		 "parent": ".pv-skill-categories-section ol > li",
+		 "s_name": ".pv-skill-category-entity__skill-wrapper > div:nth-child(2) p",
+		 "s_validations":".pv-skill-category-entity__skill-wrapper > div:nth-child(2) > a > .pv-skill-category-entity__endorsement-count",
+		 "see_more": ".pv-skill-categories-section > *:nth-child(3) button"
+	 }
+}
