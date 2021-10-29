@@ -1,6 +1,3 @@
-const loc = document.location.href;
-
-console.log(loc);
 // json map
 let _f; let jsonMap;
 
@@ -30,6 +27,8 @@ chrome.runtime.onMessage.addListener(function (request) {
  * Main Function
  */
 async function scan() {
+	const loc = document.location.href;
+	console.log(loc);
 	const scanner = document.querySelector('.scanner-wrapper');
 	scanner.classList.remove('hidden');
 	document.querySelector(jsonMap.contact_info).click();
@@ -38,6 +37,7 @@ async function scan() {
 	sMoreBtn.click();
 	const userObj = scrapeBasicData(jsonMap);
 	document.querySelector(jsonMap.close_btn).click();
+	userObj.location = loc;
 	console.log(userObj);
 	sMoreBtn.click();
 	sendData(userObj);
@@ -46,18 +46,34 @@ async function scan() {
 
 
 function scrapeBasicData(map) {
-	const name = document.querySelector(map.name).textContent;
-	let about = document.querySelector(map.about).textContent;
+	const name = validateQuery(map.name);
+	let about = validateQuery(map.about);
 	about = trim(about);
-	let experience = Array.from(document.querySelectorAll(map.experience.parent) || [])
+	let experience = validateQuery(map.experience.parent, true)
 	experience = parseExp(experience, map);
-	const avatar = document.querySelector(map.avatar).src;
-	const email = trim(document.querySelector(map.email).textContent);
-	let education = Array.from(document.querySelectorAll(map.education.parent));
+	const avatar = validateQuery(map.avatar, false, false, 'src');
+	const email = trim(validateQuery(map.email));
+	let education = validateQuery(map.education.parent, true);
 	education = parseEdu(education, map);
-	let skills = Array.from(document.querySelectorAll(map.skills.parent));
+	let skills = validateQuery(map.skills.parent, true);
 	skills = parseSkills(skills, map)
 	return { email, name, about, avatar, experience, skills, education }
+}
+
+function validateQuery(query, isAll, from, att) {
+	let resp = '';
+	let attr = att ? att : 'textContent';
+	if (isAll) {
+		const r = document.querySelectorAll(query)
+		resp = Array.from(r);
+	} else if(from) {
+		const r = from.querySelector(query);
+		resp = r === null ? '' : r[attr];
+	} else {
+		const r = document.querySelector(query);
+		resp = r === null ? '' : r[attr];
+	}
+	return resp;
 }
 /**
  * Send data to the other parts of extesion
@@ -91,11 +107,11 @@ function delay(sec = 1) {
 function parseExp(expArr, map) {
 	return expArr.map((exp) => {
 		return {
-			logo: exp.querySelector(map.experience.logo).src,
-			c_name: trim(exp.querySelector(map.experience.c_name).textContent),
-			position: exp.querySelector(map.experience.position).textContent,
-			period: exp.querySelector(map.experience.period).textContent,
-			location: exp.querySelector(map.experience.location).textContent
+			logo: validateQuery(map.experience.logo, false, exp, 'src'),
+			c_name: trim(validateQuery(map.experience.c_name, false, exp)),
+			position: validateQuery(map.experience.position, false, exp),
+			period: validateQuery(map.experience.period, false, exp),
+			location: validateQuery(map.experience.location, false, exp)
 		}
 	})
 }
@@ -111,10 +127,10 @@ function parseEdu(eduArr, map) {
 
 function parseSkills(skillArr, map) {
 	return skillArr.map((_s) => {
-		const valNum = _s.querySelector(map.skills.s_validations);
+		const valNum = validateQuery(map.skills.s_validations, false, _s);
 		return {
-			s_name: trim(_s.querySelector(map.skills.s_name).textContent),
-			s_validations: valNum !== null ? valNum.textContent : 0
+			s_name: trim(validateQuery(map.skills.s_name, false, _s)),
+			s_validations: valNum ? valNum : 0
 		}
 	})
 }

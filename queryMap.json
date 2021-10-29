@@ -20,8 +20,8 @@
 	 },
 	 "skills": {
 		 "parent": ".pv-skill-categories-section ol > li",
-		 "s_name": ".pv-skill-category-entity__skill-wrapper > div:nth-child(2) p",
-		 "s_validations":".pv-skill-category-entity__skill-wrapper > div:nth-child(2) > a > .pv-skill-category-entity__endorsement-count",
+		 "s_name": "span.pv-skill-category-entity__name-text",
+		 "s_validations":".pv-skill-category-entity__endorsement-count",
 		 "see_more": ".pv-skill-categories-section > *:nth-child(3) button"
 	 }
 }

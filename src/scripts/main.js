@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 let scriptBox;
 
 function render() {
-	chrome.storage.sync.get(['state'], (storage) => {
+	chrome.storage.local.get(['state'], (storage) => {
 		const { state } = storage;
 		// get element
 		const _d = document.querySelector('#main-content');
@@ -36,7 +36,7 @@ function getUser(data) {
 	const name = P({}, data.name);
 	const email = A({ href: 'mailto:' + data.email }, data.email);
 	const note = TextArea({ placeholder: 'Notes' });
-	const btn = Button({}, 'Save User');
+	const btn = Button({ onclick: () => { openManager(data) } }, 'Save User');
 	scriptBox.innerHTML = '';
 	scriptBox.append(img, name, email, note, btn);
 }
@@ -87,8 +87,16 @@ function Input(props = {}, content = '') {
 	return HTMLElementCreator('input', props)
 }
 */
-function openManager(index) {
-	const param = (index !== undefined) ? '?i=' + index : '';
+function openManager(data) {
+	chrome.storage.local.get(['state'], (resp) => {
+		let { state } = resp;
+		console.log(state);
+		state = {...state, [data.location]: data };
+		console.log(state);
+		chrome.storage.local.set({ 'state': state }, function() {
+			console.log('Value is set');
+		});
+	});
 	chrome.tabs.getAllInWindow(null, (tabs) => {
 		let isFound = false;
 		for (var i = 0; i < tabs.length; i++) {
@@ -96,11 +104,16 @@ function openManager(index) {
 			if (tab?.title === 'Scripter||manager') {
 				isFound = true;
 				chrome.tabs.update(tab.id, { active: true })
-				chrome.tabs.sendMessage(tab.id, { index })
+				chrome.tabs.sendMessage(tab.id, { type: 'update' })
 			}
 		}
 		if(!isFound) {
-			chrome.tabs.create({url: chrome.extension.getURL('/src/manager.html' + param)});
+			chrome.tabs.create({url: chrome.extension.getURL('/src/manager.html')});
 		}
 	});
 }
+
+chrome.storage.local.get(['state'], (resp) => {
+	let { state } = resp;
+	console.log(state);
+})
