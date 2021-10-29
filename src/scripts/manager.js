@@ -19,9 +19,10 @@ chrome.runtime.onMessage.addListener((message) => {
 function render() {
 	const _BOX = document.querySelector('#main-content');
 	_BOX.innerHTML = '';
-	_BOX.appendChild(moreInfo);
+	_BOX.append(moreInfo, notification);
 	listItems(_BOX);
 }
+
 
 function listItems(box) {
 	chrome.storage.local.get(['state'], (data) => { 
@@ -34,11 +35,39 @@ function listItems(box) {
 			subB.appendChild(Li({ onclick: () => { updateMoreInfo(item, url) } }, [
 				Img({ src: item.avatar }),
 				H3({}, item.name),
-				A({ href: 'mailto:' + item.email }, item.email),
+				item.email ? A({ href: 'mailto:' + item.email }, item.email) : P({}, 'EMAIL-NOT-FOUND'),
+				Div({ className: 'notes' }, P({}, item.notes)),
+				Div({ className: 'delte-action', onclick: () => {
+					notification.classList.remove('hidden');
+					notification.setAttributes({ 'u-id': url });
+				} },
+					Img({ src: 'img/trash-solid.svg' })
+				)
 			]))
 		})
 	});
 }
+
+const cancelBtn = Button({ className: 'cancel', onclick: () => { 
+	notification.classList.add('hidden')
+	notification.setAttributes({ 'u-id': '' })
+} }, 'Cancel')
+const submitBtn = Button({ className: 'submit', onclick:() => {
+	const id = notification.getAttribute('u-id');
+	deleteUser(id);
+	document.location.reload();
+}}, 'Acept');
+
+const notification =
+	Div({ className: 'modal-wrapper hidden' },
+		Div({ className: 'modal' },[ 
+				Div({ className: 'modal-msg' }, 'Confirm Delete'),
+				Div({ className: 'modal-actions' }, [
+					cancelBtn,
+					submitBtn
+				])
+		])
+	)
 
 function updateMoreInfo(user, url) {
 	moreInfo.innerHTML = '';
@@ -50,3 +79,12 @@ function updateMoreInfo(user, url) {
 }
 
 
+function deleteUser(id) {
+	chrome.storage.local.get(['state'], (data) => {
+		let { state } = data
+		state[id] = undefined;
+		chrome.storage.local.set({ 'state': state }, function() {
+			console.log('Value is set');
+		});
+	})
+}

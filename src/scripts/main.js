@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 let scriptBox;
+const note = TextArea({ placeholder: 'Notes' });
 
 function render() {
 	chrome.storage.local.get(['state'], (storage) => {
@@ -34,8 +35,7 @@ function reScan() {
 function getUser(data) {
 	const img = Img({ src: data.avatar });
 	const name = P({}, data.name);
-	const email = A({ href: 'mailto:' + data.email }, data.email);
-	const note = TextArea({ placeholder: 'Notes' });
+	const email = data.email ? A({ href: 'mailto:' + data.email }, data.email) : P({}, 'EMAIL-NOT-FOUND')
 	const btn = Button({ onclick: () => { openManager(data) } }, 'Save User');
 	scriptBox.innerHTML = '';
 	scriptBox.append(img, name, email, note, btn);
@@ -48,49 +48,11 @@ function getEmptyState() {
 	])
 }
 
-/*
-function getJobItem(st, i) {
-	const item =  Div({ className:'sc-item' }, [
-		getJobSubItem('Target match:', st.target, 'target'),
-		getJobSubItem('Script name:', st.name, 'title-job'),
-		getJobSubItem('Exec Time:', st.execTime, 'exc-t'),
-		Div({className: 'is-active'}, [
-			Label({}, 'Actve:'), ToggleSwitch(st.active)
-		]),
-		Div({className: 'sc-actions'}, [
-			Button({
-				onclick: () => { openManager(i) }
-			}, 'Edit'),
-			Button({}, 'Delete')
-		])
-	]);
-	return item
-}
-
-function getJobSubItem(title, value, id) {
-	return Div({}, [
-		Label({}, title),
-		Input({id, value, className: 'inp-no-outline', attributes: {disabled:''}})
-	])
-}
-
-function ToggleSwitch(isActive) {
-	const att = isActive ? { checked:'', disabled: '' } : {disabled: ''};
-	return Label({className: 'switch'}, [
-		Input({type:'checkbox', attributes: att}),
-		Span({className: 'slider round'})
-	])
-}
-
-function Input(props = {}, content = '') {
-	props.content = content;
-	return HTMLElementCreator('input', props)
-}
-*/
 function openManager(data) {
 	chrome.storage.local.get(['state'], (resp) => {
 		let { state } = resp;
 		console.log(state);
+		data.notes = note.value;
 		state = {...state, [data.location]: data };
 		console.log(state);
 		chrome.storage.local.set({ 'state': state }, function() {

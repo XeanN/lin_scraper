@@ -157,6 +157,7 @@ input:checked + .slider:before {
 
 .all-items > * {
 	padding: .5rem;
+	position: relative;
 	border-radius: 3px;
 	/* background-color: rgba(255,255,255,.7); */
 	margin: .5rem 0;
@@ -246,4 +247,68 @@ li > img {
 
 a {
 	color: #4FD1C5;
+}
+
+.notes {
+	grid-area: 3 / 1 / span 1 / span 2;
+}
+
+.delte-action {
+	position: absolute;
+	width: 32px;
+	height: 32px;
+	padding: 8px;
+	box-sizing: border-box;
+	top: 5px;
+	right: 10px;
+	border-radius: 50%;
+	box-shadow: 0 0px 2px 2px #171923;
+	cursor: pointer;
+	transition: all .3s ease;
+}
+
+.delte-action:hover {
+	box-shadow: 0 0px 6px 1px #c53030;
+}
+
+.modal-wrapper {
+	position: fixed;
+	top:0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	background-color: rgba(0,0,0,.5);
+	z-index: 100;
+	display: grid;
+	place-content: center;
+}
+
+.modal{display: grid;row-gap: 1rem;background-color: white;color: #171923;font-size: xx-large;padding: 1rem;border-radius: .5rem;}
+
+.modal-actions {
+	display:grid;
+	grid-template-columns: 1fr .5fr;
+	gap: 1rem;
+}
+.modal-actions > button {
+	height: 45px;
+	cursor: pointer;
+	transition: all .3s ease;
+	border: none;
+	border-radius: 3px
+
+}
+
+.modal-actions > .cancel:hover {
+    background-color: #718096;
+	color: white;
+}
+
+.modal-actions > .submit:hover {
+	background-color: #E53E3E;
+	color: white;
+}
+
+.hidden {
+	display: none;
 }
