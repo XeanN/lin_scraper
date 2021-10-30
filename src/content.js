@@ -48,7 +48,7 @@ async function scan() {
 function scrapeBasicData(map) {
 	const name = validateQuery(map.name);
 	let about = validateQuery(map.about);
-	about = trim(about);
+	about = softTrim(about);
 	let experience = validateQuery(map.experience.parent, true)
 	experience = parseExp(experience, map);
 	const avatar = validateQuery(map.avatar, false, false, 'src');
@@ -57,7 +57,8 @@ function scrapeBasicData(map) {
 	education = parseEdu(education, map);
 	let skills = validateQuery(map.skills.parent, true);
 	skills = parseSkills(skills, map)
-	return { email, name, about, avatar, experience, skills, education }
+	const pdf_btn = document.querySelector(map.pdf_btn);
+	return { email, name, about, avatar, experience, skills, education, pdf_btn }
 }
 
 function validateQuery(query, isAll, from, att) {
@@ -137,5 +138,9 @@ function parseSkills(skillArr, map) {
 
 function trim(str) {
 	return str.replace(/(    )|(  )|(see more)|\n|(…)/g, '');
+}
+
+function softTrim(str) {
+	return str.replace(/(    )|(  )|(see more)|(…)/g, '');
 }
 

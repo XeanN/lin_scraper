@@ -23,5 +23,6 @@
 		 "s_name": "span.pv-skill-category-entity__name-text",
 		 "s_validations":".pv-skill-category-entity__endorsement-count",
 		 "see_more": ".pv-skill-categories-section > *:nth-child(3) button"
-	 }
+	 },
+	 "pdf_btn": "[data-control-name=\"save_to_pdf\"] span"
 }
