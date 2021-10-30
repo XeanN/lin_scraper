@@ -4,23 +4,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let scriptBox;
 const note = TextArea({ placeholder: 'Notes' });
-
+const scanBtn = Button({id: 're-scan', onclick: () => { reScan() }}, 'Scan');
 function render() {
 	chrome.storage.local.get(['state'], (storage) => {
 		const { state } = storage;
 		// get element
 		const _d = document.querySelector('#main-content');
 		// set title
-		_d.H3({}, 'User Data:');
+		_d.Div({ className: 'header' }, [
+			H3({}, 'User Data:'),
+			Button({ onclick: () => { openManager() } }, 'Open Manager')
+		])
 		scriptBox = _d.Div({className: 'scripts-box'});
 		scriptBox.appendChild(getEmptyState())
-		_d.Button({id: 're-scan', onclick: () => { reScan() }}, 'Scan');
+		_d.appendChild(scanBtn);
 	})
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 	if (request.type === 'user_data') {
 		console.log(request.data);
+		scanBtn.classList.add('hidden');
 		getUser(request.data);
 	}
 });
@@ -42,23 +46,22 @@ function getUser(data) {
 }
 
 function getEmptyState() {
-	return Div({className: 'empty-state'},[
-		H3({}, 'No Scan is available for this site.'),
-		Img({src: 'img/empty-state.png'})
-	])
+	return Div({className: 'empty-state'})
 }
 
 function openManager(data) {
-	chrome.storage.local.get(['state'], (resp) => {
-		let { state } = resp;
-		console.log(state);
-		data.notes = note.value;
-		state = {...state, [data.location]: data };
-		console.log(state);
-		chrome.storage.local.set({ 'state': state }, function() {
-			console.log('Value is set');
+	if (data) {
+		chrome.storage.local.get(['state'], (resp) => {
+			let { state } = resp;
+			console.log(state);
+			data.notes = note.value;
+			state = {...state, [data.location]: data };
+			console.log(state);
+			chrome.storage.local.set({ 'state': state }, function() {
+				console.log('Value is set');
+			});
 		});
-	});
+	}
 	chrome.tabs.getAllInWindow(null, (tabs) => {
 		let isFound = false;
 		for (var i = 0; i < tabs.length; i++) {

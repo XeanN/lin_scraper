@@ -21,4 +21,4 @@ git clone https://github.com/rebelstackio/lin_scraper.git
 - there you can set notes and save the user.
 - After you save the user will open the manager view, there you can see all the information, delete and user, export all users, import from file.
 
-Note: Importing will replace your existing data with the file data.
+Note: Importing will replace your existing data with the file data.	
