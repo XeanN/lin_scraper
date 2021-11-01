@@ -6,7 +6,7 @@
 	"close_btn": ".artdeco-modal > button",
 	"email": "a[href^=\"mailto:\"]",
 	"experience": { 
-		"parent": "#experience-section li",
+		"parent": "#experience-section li:not(.pv-entity__position-group-role-item)",
 		"logo": ".company-logo > img",
 		"c_name": ".pv-entity__summary-info > .pv-entity__secondary-title",
 		"position": ".pv-entity__summary-info > h3",

@@ -120,8 +120,8 @@ function parseExp(expArr, map) {
 function parseEdu(eduArr, map) {
 	return eduArr.map((edu) => {
 		return {
-			logo: edu.querySelector(map.education.logo).src,
-			u_name: edu.querySelector(map.education.u_name).textContent
+			logo: validateQuery(map.education.logo, false, edu, 'src'),
+			u_name: validateQuery(map.education.u_name, false, edu)
 		}
 	})
 }

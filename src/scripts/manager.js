@@ -40,14 +40,20 @@ function onReaderLoad(event){
 	console.log('Importing file =>',obj);
 	chrome.storage.local.set({ 'state': obj }, function() {
 		console.log('Value is set');
+		document.location.reload();
 	});
 }
 
+const currentUser = Div({ className: 'current-user' });
+
 const options = Div({className: 'app-options'}, [
-	Button({ className: 'export', onclick: exportJson }, 'Export'),
-	Button({ className: 'import', onclick: () => {
-		importHelper.click();
-	} }, 'import'),
+	Div({},[
+		Button({ className: 'export', onclick: exportJson }, 'Export'),
+		Button({ className: 'import', onclick: () => {
+			importHelper.click();
+		} }, 'import'),
+	]),
+	currentUser,
 	importHelper
 ]);
 
@@ -110,6 +116,13 @@ const notification =
 /** {s_name: 'Diseño gráfico', s_validations: '1'}*/
 function updateMoreInfo(user, url) {
 	moreInfo.innerHTML = '';
+	currentUser.innerHTML = '';
+	currentUser.append(
+		Img({ src: user.avatar }),
+		H3({}, user.name),
+		user.email ? A({ href: 'mailto:' + user.email }, user.email) : P({}, 'EMAIL-NOT-FOUND'),
+		Div({ className: 'notes' }, P({}, user.notes)),
+	);
 	moreInfo.append(
 		Div({ className: 'profile' }, A({ href: url }, url)),
 		Div({ className: 'section' },
