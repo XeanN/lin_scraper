@@ -34,12 +34,12 @@ async function scan() {
 	document.querySelector(jsonMap.contact_info).click();
 	await preloadPage(0);
 	const sMoreBtn = document.querySelector(jsonMap.skills.see_more);
-	sMoreBtn.click();
+	if (sMoreBtn !== null) sMoreBtn.click();
 	const userObj = scrapeBasicData(jsonMap);
 	document.querySelector(jsonMap.close_btn).click();
 	userObj.location = loc;
 	console.log(userObj);
-	sMoreBtn.click();
+	if (sMoreBtn !== null) sMoreBtn.click();
 	sendData(userObj);
 	scanner.classList.add('hidden');
 }
