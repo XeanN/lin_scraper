@@ -1,4 +1,7 @@
 const _PARAM_RAW = document.location.href.match(new RegExp('(\\?i=[0-9]*)','g'));
+const _nullProfileImg = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
+const _nullImg = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png';
+
 const moreInfo = Div({ className: 'more-wrapper' })
 	.Div({ className: 'empty' })
 	.H1({}, 'Select a User to see more')
@@ -78,7 +81,7 @@ function listItems(box) {
 			const item = state[url];
 			console.log(item.pdf_btn);
 			subB.appendChild(Li({ onclick: () => { updateMoreInfo(item, url) } }, [
-				Img({ src: item.avatar }),
+				Img({ src: validateNullImg(item.avatar, _nullProfileImg) }),
 				H3({}, item.name),
 				item.email ? A({ href: 'mailto:' + item.email }, item.email) : P({}, 'EMAIL-NOT-FOUND'),
 				Div({ className: 'notes' }, P({}, item.notes)),
@@ -113,12 +116,20 @@ const notification =
 				])
 		])
 	)
-/** {s_name: 'Diseño gráfico', s_validations: '1'}*/
+
+function validateNullImg(src = '', defaultImg) {
+	if (!src || (src.match(/(data:)/g) !== null)) {
+		return defaultImg;
+	} else {
+		return src
+	}
+}
+
 function updateMoreInfo(user, url) {
 	moreInfo.innerHTML = '';
 	currentUser.innerHTML = '';
 	currentUser.append(
-		Img({ src: user.avatar }),
+		Img({ src: validateNullImg(user.avatar, _nullProfileImg) }),
 		H3({}, user.name),
 		user.email ? A({ href: 'mailto:' + user.email }, user.email) : P({}, 'EMAIL-NOT-FOUND'),
 		Div({ className: 'notes' }, P({}, user.notes)),
@@ -130,7 +141,7 @@ function updateMoreInfo(user, url) {
 				H1({}, 'Experience'),
 				...user.experience.map((ex) => {
 					return Div({},[
-						Img({ src: ex.logo }),
+						Img({ src: validateNullImg(ex.logo, _nullImg) }),
 						H3({}, ex.c_name),
 						Span({}, ex.location),
 						H4({}, `Position: ${ex.position}`)
@@ -143,7 +154,7 @@ function updateMoreInfo(user, url) {
 				H1({}, 'Education'),
 				...user.education.map((ed) => {
 					return Div({}, [
-						Img({ src: ed.logo }),
+						Img({ src: validateNullImg(ed.logo, _nullImg) }),
 						H3({}, ed.u_name)
 					])
 				})

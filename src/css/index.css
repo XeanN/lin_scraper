@@ -456,3 +456,8 @@ button {
 	border-radius: 50%;
 	place-self: center;
 }
+
+.education img {
+	max-width: 5rem;
+	height: auto;
+}

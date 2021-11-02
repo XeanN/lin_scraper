@@ -1,3 +1,13 @@
+const _nullProfileImg = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
+
+function validateNullImg(src = '', defaultImg) {
+	if (!src || (src.match(/(data:)/g) !== null)) {
+		return defaultImg;
+	} else {
+		return src
+	}
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 	render();
 });
@@ -37,7 +47,7 @@ function reScan() {
 
 
 function getUser(data) {
-	const img = Img({ src: data.avatar });
+	const img = Img({ src: validateNullImg(data.avatar, _nullProfileImg) });
 	const name = P({}, data.name);
 	const email = data.email ? A({ href: 'mailto:' + data.email }, data.email) : P({}, 'EMAIL-NOT-FOUND')
 	const btn = Button({ onclick: () => { openManager(data) } }, 'Save User');
