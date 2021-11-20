@@ -1,4 +1,9 @@
 // json map
+
+debugger;
+
+console.log('content script running');
+
 let _f; let jsonMap;
 
 const scanerComp = () => Div({ className: 'scanner-wrapper hidden' }, [
@@ -53,12 +58,14 @@ function scrapeBasicData(map) {
 	experience = parseExp(experience, map);
 	const avatar = validateQuery(map.avatar, false, false, 'src');
 	const email = trim(validateQuery(map.email));
+	const phone = trim(validateQuery(map.phone));
+	const phonetype = trim(validateQuery(map.phonetype));
 	let education = validateQuery(map.education.parent, true);
 	education = parseEdu(education, map);
 	let skills = validateQuery(map.skills.parent, true);
 	skills = parseSkills(skills, map)
 	const pdf_btn = document.querySelector(map.pdf_btn);
-	return { email, name, about, avatar, experience, skills, education, pdf_btn }
+	return { email, name, phone, phonetype, about, avatar, experience, skills, education, pdf_btn }
 }
 
 function validateQuery(query, isAll, from, att) {
@@ -77,7 +84,7 @@ function validateQuery(query, isAll, from, att) {
 	return resp;
 }
 /**
- * Send data to the other parts of extesion
+ * Send data to the other parts of extension
  * @param {*} data 
  */
 function sendData(data) {
@@ -112,7 +119,8 @@ function parseExp(expArr, map) {
 			c_name: trim(validateQuery(map.experience.c_name, false, exp)),
 			position: validateQuery(map.experience.position, false, exp),
 			period: validateQuery(map.experience.period, false, exp),
-			location: validateQuery(map.experience.location, false, exp)
+			location: validateQuery(map.experience.location, false, exp),
+			description: validateQuery(map.experience.description, false, exp)
 		}
 	})
 }

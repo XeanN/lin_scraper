@@ -5,13 +5,16 @@
 	"contact_info": ".pv-text-details__left-panel a",
 	"close_btn": ".artdeco-modal > button",
 	"email": "a[href^=\"mailto:\"]",
+	"phone": ".ci-phone span:nth-child(1)",
+	"phone_type":".ci-phone span:nth-child(2)",
 	"experience": { 
 		"parent": "#experience-section li:not(.pv-entity__position-group-role-item)",
 		"logo": ".company-logo > img",
 		"c_name": ".pv-entity__summary-info > .pv-entity__secondary-title",
 		"position": ".pv-entity__summary-info > h3",
 		"period": ".pv-entity__summary-info > div > h4 > span:nth-child(2)",
-		"location": ".pv-entity__summary-info > h4 > span:nth-child(2)"
+		"location": ".pv-entity__summary-info > h4 > span:nth-child(2)",
+		"description": ".pv-entity__description"
 	 },
 	 "education": {
 		 "parent": "#education-section li",
