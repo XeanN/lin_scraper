@@ -1,3 +1,14 @@
+let DB;
+// Your web app's Firebase configuration
+const firebaseConfig = {
+	apiKey: "AIzaSyDHN_ypZVyGG7OXYuAo21j0tnQNBfGzZKk",
+	authDomain: "ivory-link-263318.firebaseapp.com",
+	projectId: "ivory-link-263318",
+	storageBucket: "ivory-link-263318.appspot.com",
+	messagingSenderId: "13119697030",
+	appId: "1:13119697030:web:e25509baabb7b5404f6107"
+};
+
 const _nullProfileImg = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
 
 function validateNullImg(src = '', defaultImg) {
@@ -10,6 +21,9 @@ function validateNullImg(src = '', defaultImg) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	render();
+	firebase.initializeApp(firebaseConfig);
+	DB = firebase.firestore();
+	console.log(DB);
 });
 
 let scriptBox;
@@ -59,19 +73,14 @@ function getEmptyState() {
 	return Div({className: 'empty-state'})
 }
 
-function openManager(data) {
+async function openManager(data) {
 	if (data) {
-		chrome.storage.local.get(['state'], (resp) => {
-			let { state } = resp;
-			console.log(state);
-			data.notes = note.value;
-			state = {...state, [data.location]: data };
-			console.log(state);
-			chrome.storage.local.set({ 'state': state }, function() {
-				console.log('Value is set');
-			});
-		});
+		data.notes = note.value;
+		const base64Location = btoa(data.location)
+		const ref = DB.collection('/users/').doc(base64Location);
+		await ref.set(data, { merge: true });
 	}
+
 	chrome.tabs.getAllInWindow(null, (tabs) => {
 		let isFound = false;
 		for (var i = 0; i < tabs.length; i++) {
@@ -87,8 +96,3 @@ function openManager(data) {
 		}
 	});
 }
-
-chrome.storage.local.get(['state'], (resp) => {
-	let { state } = resp;
-	console.log(state);
-})

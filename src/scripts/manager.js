@@ -1,3 +1,17 @@
+let Data = null;
+// Your web app's Firebase configuration
+const firebaseConfig = {
+	apiKey: "AIzaSyDHN_ypZVyGG7OXYuAo21j0tnQNBfGzZKk",
+	authDomain: "ivory-link-263318.firebaseapp.com",
+	projectId: "ivory-link-263318",
+	storageBucket: "ivory-link-263318.appspot.com",
+	messagingSenderId: "13119697030",
+	appId: "1:13119697030:web:e25509baabb7b5404f6107"
+};
+
+firebase.initializeApp(firebaseConfig);
+let DB = firebase.firestore();
+
 const _PARAM_RAW = document.location.href.match(new RegExp('(\\?i=[0-9]*)','g'));
 const _nullProfileImg = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png';
 const _nullImg = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png';
@@ -41,10 +55,17 @@ const importHelper = Input({ className: 'away', type: 'file', onchange: function
 function onReaderLoad(event){
 	var obj = JSON.parse(event.target.result);
 	console.log('Importing file =>',obj);
-	chrome.storage.local.set({ 'state': obj }, function() {
-		console.log('Value is set');
-		document.location.reload();
-	});
+	Object.keys(obj).forEach((key) => {
+		const user = obj[key];
+		writeImported(user, key);
+	})
+}
+
+async function writeImported(user, id) {
+	const base64Location = btoa(id)
+	const ref = DB.collection('/users/').doc(base64Location);
+	await ref.set(user, { merge: true });
+	console.log('imported user:', user.name);
 }
 
 const currentUser = Div({ className: 'current-user' });
@@ -61,39 +82,51 @@ const options = Div({className: 'app-options'}, [
 ]);
 
 function exportJson() {
-	chrome.storage.local.get(['state'], (data) => {
-		const { state } = data;
-		const blob = new Blob([JSON.stringify(state)], {type: "application/json"});
-		const url = URL.createObjectURL(blob);
-		chrome.downloads.download({
-			url: url
-		});
+	const blob = new Blob([JSON.stringify(Data)], {type: "application/json"});
+	const url = URL.createObjectURL(blob);
+	chrome.downloads.download({
+		url: url
+	});
+}
+
+const onMessage = async function _onMessage(next) {
+	if (!DB) {
+		await delay(.5);
+		return onMessage(next);
+	}
+	return DB.collection('users').onSnapshot(next)
+}
+
+async function listItems(box) {
+	await onMessage((snap) => {
+		let state = {};
+		snap.forEach((doc) => {
+			const user = doc.data();
+			state[user.location] = user;
+		})
+		Data = state;
+		writeList(box, state);
 	})
 }
 
-function listItems(box) {
-	chrome.storage.local.get(['state'], (data) => { 
-		const {state} = data;
-		const subB = Ul({className: 'all-items'});
-		box.appendChild(subB)
-		console.log(state);
-		Object.keys(state).forEach(url => {
-			const item = state[url];
-			console.log(item.pdf_btn);
-			subB.appendChild(Li({ onclick: () => { updateMoreInfo(item, url) } }, [
-				Img({ src: validateNullImg(item.avatar, _nullProfileImg) }),
-				H3({}, item.name),
-				item.email ? A({ href: 'mailto:' + item.email }, item.email) : P({}, 'EMAIL-NOT-FOUND'),
-				Div({ className: 'notes' }, P({}, item.notes)),
-				Div({ className: 'delte-action', onclick: () => {
-					notification.classList.remove('hidden');
-					notification.setAttributes({ 'u-id': url });
-				} },
-					Img({ src: 'img/trash-solid.svg' })
-				)
-			]))
-		})
-	});
+function writeList(box, state) {
+	const subB = Ul({className: 'all-items'});
+	box.appendChild(subB)
+	Object.keys(state).forEach(url => {
+		const item = state[url];
+		subB.appendChild(Li({ onclick: () => { updateMoreInfo(item, url) } }, [
+			Img({ src: validateNullImg(item.avatar, _nullProfileImg) }),
+			H3({}, item.name),
+			item.email ? A({ href: 'mailto:' + item.email }, item.email) : P({}, 'EMAIL-NOT-FOUND'),
+			Div({ className: 'notes' }, P({}, item.notes)),
+			Div({ className: 'delte-action', onclick: () => {
+				notification.classList.remove('hidden');
+				notification.setAttributes({ 'u-id': url });
+			} },
+				Img({ src: 'img/trash-solid.svg' })
+			)
+		]))
+	})
 }
 
 const cancelBtn = Button({ className: 'cancel', onclick: () => { 
@@ -103,7 +136,6 @@ const cancelBtn = Button({ className: 'cancel', onclick: () => {
 const submitBtn = Button({ className: 'submit', onclick:() => {
 	const id = notification.getAttribute('u-id');
 	deleteUser(id);
-	document.location.reload();
 }}, 'Acept');
 
 const notification =
@@ -178,11 +210,19 @@ function updateMoreInfo(user, url) {
 
 
 function deleteUser(id) {
-	chrome.storage.local.get(['state'], (data) => {
-		let { state } = data
-		state[id] = undefined;
-		chrome.storage.local.set({ 'state': state }, function() {
-			console.log('Value is set');
-		});
+	let base64Location = btoa(id).slice(0, -1);
+	console.log(base64Location);
+	DB.collection('user').doc(base64Location).delete()
+	.then(() => {
+		console.log('deleted');
+	})
+	.catch((err) => {
+		console.warn(err)
+	})
+}
+
+function delay(s=1) {
+	return new Promise((resolve) => {
+		setTimeout(() => { resolve() }, s * 1000)
 	})
 }
