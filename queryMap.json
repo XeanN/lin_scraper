@@ -7,6 +7,45 @@
 	"email": "a[href^=\"mailto:\"]",
 	"phone": ".ci-phone span:nth-child(1)",
 	"phone_type":".ci-phone span:nth-child(2)",
+	"coures": {
+		"parent": "#courses-expandable-content > ul",
+		"course": ".pv-accomplishments-block__summary-list-item"
+	},
+	"awards":{
+		"parent": "#honors-expandable-content > ul",
+		"award": ".pv-accomplishments-block__summary-list-item"
+	},
+	"certifications": {
+		"parent": "#certifications-section > ul",
+		"href":".pv-certification-entity > div > a",
+		"img":".pv-certification-entity > div > a > .pv-entity__logo > img",
+		"title":".pv-certification-entity > div > a >  .pv-certifications__summary-info > h3",
+		"issuer":".pv-certification-entity > div > a > .pv-certifications__summary-info > p:nth-of-type(1) > span:nth-of-type(2)",
+		"issued":".pv-certification-entity > div > a > .pv-certifications__summary-info > p:nth-of-type(2) > span:nth-of-type(2)"
+
+
+	},
+	"volunteer": {
+		"parent":"volunteering-section > ul",
+		"href":"li > a[href]",
+		"logo":"li > .pv-entity__logo > img",
+		"company":".pv-entity__summary-info > h4 span:nth-of-type(2)",
+		"role":".pv-entity__summary-info > h3"
+	},
+	"highlights": {
+		"parent": "#highlights-container",
+		"boring": true
+	},
+	"featured": {
+		"parent": ".pab-featured-section",
+		"text": ".pab-featured-item-detail__text-container",
+		"href": ".featured_item_detail_view"
+	},
+	"languages":{
+		"parent": "#languages-expandable-content > ul",
+		"language": "li",
+		"proficiency": " li > p"
+	},
 	"experience": { 
 		"parent": "#experience-section li:not(.pv-entity__position-group-role-item)",
 		"logo": ".company-logo > img",
