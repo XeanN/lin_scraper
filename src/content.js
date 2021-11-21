@@ -1,6 +1,6 @@
 // json map
 
-debugger;
+//debugger;
 
 console.log('content script running');
 
